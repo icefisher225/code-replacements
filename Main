@@ -1,0 +1,84 @@
+import sys
+import os
+import datetime
+
+
+def school_abbreviation(name):
+    name = name.split()
+    abbv = ""
+    no_lst = ["of", "the", "in", "at"]
+    for no in no_lst:
+        for item in name:
+            if item.lower() == no:
+                name.remove(item)
+    for item in name:
+        abbv += item[0].lower()
+    return abbv
+
+
+def basic_info():
+    school = input("School long name: ")
+    while True:
+        sex = input("sex: ")
+        if sex == "m" or sex == "f":
+            break
+        else:
+            print("incorrect input, please try again.")
+    sport_abbv = input("sport abbreviation: ")
+    return school_abbreviation(school) + sex + sport_abbv, school
+
+
+def position(lst):
+    try:
+        g = lst[3]
+        return g + ", "
+    except IndexError:
+        return ""
+
+
+def player_input_line(call, school, f):
+    f = f.split("\t")
+    line = call+f[2] + "\t" + school+"'s "+position(f)+f[0]+" "+f[1] + ", #"+f[2]+",\t" + \
+        f[0]+" "+f[1]+", #"+f[2]+",\t" + f[1]
+    return line
+
+
+def coach_input_line(call, school, f):
+    f = f.split("\t")
+    line = call+f[2] + "\t" + school+"'s "+position(f)+f[0]+" "+f[1]+",\t" + \
+        f[0]+" "+f[1]+",\t" + f[1]
+    return line
+
+
+def main():
+    ret = basic_info()
+    call = ret[0]
+    school = ret[1]
+    roster = list()
+    print("the word tab needs to be replaced by \\t whe it is written in. ")
+    print("Line input is FirstName tab Lastname tab Number " + \
+          "(tab Position, if they have a position like goalie or captain).")
+    print("To add coaches, type 'coach'. To finish and save the file, type 'exit'.")
+    print("The file will be saved to the folder you ran this application from.")
+    while True:
+        inpt = input(">")
+        if inpt == "exit":
+            print("Saving and exiting...")
+            with open(call.upper()+str(datetime.datetime.now().year)+".txt", "x") as f:
+                for line in roster:
+                    f.write(line)
+            exit(1)
+        elif inpt == "coach":
+            print("Line input is FirstName tab LastName tab Head Coach/Assistant Coach/Associate Coach/etc.")
+            try:
+                roster += coach_input_line(call, school, inpt)
+            except IndexError:
+                continue
+        else:
+            try:
+                roster += player_input_line(call, school, inpt)
+            except IndexError:
+                print("Incorrect command. please try again.")
+                continue
+
+main()
