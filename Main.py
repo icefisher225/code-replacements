@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 
 def school_abbreviation(name):
@@ -24,9 +24,13 @@ def basic_info():
     Prompts the user for basic info and passes it back to the main function.
     :return: (Tuple) basic info for the school and sport and sex of the athletes.
     """
-    school = input("School long name: ")
+    school = input("School long name: ").title() # make each word start w/ caps letter
+    # school = school.split(" ")
+    # for item in school:
+    #     item[0] = item[0].upper()
+    # school = " ".join(school)
     while True:
-        sex = input("sex: ")
+        sex = input("sex (m/f): ").lower()
         if sex == "m" or sex == "f":
             break
         else:
@@ -41,11 +45,7 @@ def position(lst):
     :param lst: (List) Input given by the user about a certain player.
     :return: (None or String) the player's position, if applicable.
     """
-    try:
-        g = lst[3]
-        return g + ", "
-    except IndexError:
-        pass
+    return f'{lst[3]}, ' if len(lst)==4 else ''
 
 
 def coachformat(st):
@@ -57,16 +57,23 @@ def coachformat(st):
     return ' '.join([word.lower() for word in st.split(' ')])
 
 
-def player_input_line(call, school, f):
+def player_input_line(call, school, f:str):
     """
     Returns a properly formatted line about a player.
     :param call: (String) The beginning of the line, includes the gender, sport, and school abbreviation.
-    :param school:(String) The longform name of the school.
+    :param school: (String) The longform name of the school.
     :param f: (String) The input line from the user.
     :return: (String) A properly formatted line with all necessary information about a player.
     """
-    f = f.split("\t")
-    return f"{call}{f[2]}\t{school}'s {position(f)}{f[0]} {f[1]}, #{f[2]},\t{f[0]} {f[1]}, #{f[2]},\t{f[1]}"
+
+    # Original version of this code
+    # f = f.split("\t")
+    # return f"{call}{f[2]}\t{school}'s {position(f)} {f[0]} {f[1]}, #{f[2]},\t{f[0]} {f[1]}, #{f[2]},\t{f[1]}\n"
+
+    first, last, number, pos = (f + ['']) if len(f:=f.split("\t")) == 3 else (f)
+    # padding with empty string if length is less than 4
+    # if this doesn't work, go yell at Jonah (@TG-Techie)
+    return f"""{call}{number}\t{school}'s {pos}, {first} {last}, #{number},\t{first} {last}, #{number},\t{last}\n"""
 
 
 def coach_input_line(call, school, f):
@@ -83,17 +90,17 @@ def coach_input_line(call, school, f):
         call += item[0].lower()
         print(call)
     print(f[2])
-    return f"{call}\t{school}'s {coachformat(f[2])}{f[0]} {f[1]},\t{f[0]} {f[1]},\t{f[1]}"
+    return f"{call}\t{school}'s {coachformat(f[2])}, {f[0]} {f[1]},\t{f[0]} {f[1]},\t{f[1]}\n"
 
+def filename(*, call) -> str:
+    return f"Out/{call.upper()}{(year:=datetime.now().year)}-{year+1}.txt"
 
 def main():
     """
     Runs the program to create properly formatted player and coach files.
     :return: None.
     """
-    ret = basic_info()
-    call = ret[0]
-    school = ret[1]
+    call, school = basic_info()
     roster = list()
     print("the word tab needs to be replaced by a press of the tab key when it is typed in. ")
     print("Line input is FirstName tab Lastname tab Number " + \
@@ -105,15 +112,15 @@ def main():
         if inpt == "exit":
             print("Saving and exiting...")
             try:
-                with open(f"Out/{call.upper()}{datetime.datetime.now().year}.txt", "x+") as f:
+                with open(filename(call=call), "x+") as f:
                     for line in roster:
                         f.write(line)
-                exit()
+                return # do not call exit here
             except IOError:
                 print("File already exists. Copy this output to a new file if you wish to save it.")
                 for line in roster:
                     print(line)
-                exit()
+                return # do not call exit here
         elif inpt == "coach":
             print("Line input is FirstName tab LastName tab Head Coach/Assistant Coach/Associate Coach/etc.")
             inpt = input(">")
@@ -122,10 +129,17 @@ def main():
             except IndexError:
                 continue
         else:
+            if inpt == '\n':
+                continue
             try:
+                assert (ln:=len(inpt.split("\t"))) in (3, 4), f'Expected a list of len 3 or 4, got len {ln}'
                 roster += player_input_line(call, school, inpt)
             except IndexError:
                 print("Incorrect command. please try again.")
                 continue
+            except AssertionError as e:
+                print(e)
+                continue
 
-main()
+if __name__ == "__main__":
+    main()
