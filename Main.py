@@ -73,7 +73,7 @@ def player_input_line(call, school, f:str):
     first, last, number, pos = (f + ['']) if len(f:=f.split("\t")) == 3 else (f)
     # padding with empty string if length is less than 4
     # if this doesn't work, go yell at Jonah (@TG-Techie)
-    return f"""{call}{number}\t{school}'s {pos}, {first} {last}, #{number},\t{first} {last}, #{number},\t{last}\n"""
+    return f"""{call}{number}\t{school}'s {pos}, {first.capitalize()} {last.capialize()}, #{number},\t{first.capitalize()} {last.capitalize()}, #{number},\t{last.capitalize()}\n"""
 
 
 def coach_input_line(call, school, f):
@@ -88,9 +88,7 @@ def coach_input_line(call, school, f):
     newCall = f[2].split(" ")
     for item in newCall:
         call += item[0].lower()
-        print(call)
-    print(f[2])
-    return f"{call}\t{school}'s {coachformat(f[2])}, {f[0]} {f[1]},\t{f[0]} {f[1]},\t{f[1]}\n"
+    return f"{call}\t{school}'s {coachformat(f[2])}, {f[0].capitalize()} {f[1].capitalize()},\t{f[0].capitalize()} {f[1].capitalize()},\t{f[1].capitalize()}\n"
 
 def filename(*, call) -> str:
     return f"Out/{call.upper()}{(year:=datetime.now().year)}-{year+1}.txt"
