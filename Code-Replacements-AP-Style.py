@@ -20,8 +20,11 @@ def school_abbreviation(name):
 
 def sport():
     sports={"hockey":"hky", "basketball":"bb", "soccer":"soc", "volleyball":"vball", "lacrosse":"lax", "baseball":"bsb", "softball":"sb"}
-    return sports.get(input("sport: ").lower(), default=None)
-
+    spt = sports.get(input("sport: ").lower())
+    if spt == "vball" or spt == "sb" or spt == "bsb":
+        return spt, 1
+    else:
+        return spt, 0
 
 
 
@@ -36,11 +39,12 @@ def basic_info():
     #     item[0] = item[0].upper()
     # school = " ".join(school)
     no_lst = ["of", "the", "in", "at", "for"]
-    for item in no_lst:
-        for name in school:
+    for name in school:
+        name = name.capitalize()
+        for item in no_lst:
             if name == item:
                 name = name.lower()
-    " ".join(school)
+    sch = " ".join(school)
     while True:
         sex = input("sex (m/w): ").lower()
         if sex == "m" or sex == "w":
@@ -48,11 +52,14 @@ def basic_info():
         else:
             print(f"Expected <m> or <f>, got <{sex}>")
     while True:
-        sport = sport()
-        if sport is not None:
+        spt = sport()
+        if spt is not None:
             break
-
-    return school_abbreviation(school) + sex + sport, school
+    print(type(sch), type(sex), type(sport))
+    if spt[1] == 1:
+        return school_abbreviation(sch) + spt[0], sch
+    else:
+        return school_abbreviation(sch) + sex + spt[0], sch
 
 
 def position(lst):
@@ -102,7 +109,8 @@ def coach_input_line(call, school, f):
     :param f: (String) The input line from the user.
     :return: (String) A properly formatted line with all necessary information about a coach.
     """
-    first, last, pos = (f[0].capitalize() + f[1].capitalize() + coachformat(f[2])) if len(f:=f.split("\t"))) == 3
+    f=f.split("\t")
+    first, last, pos = (f[0].capitalize() + f[1].capitalize() + coachformat(f[2]))
     newCall = f[2].split(" ")
     for item in newCall:
         call += item[0].lower()
