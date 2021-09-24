@@ -55,7 +55,12 @@ def basic_info():
         spt = sport()
         if spt is not None:
             break
-    print(type(sch), type(sex), type(sport))
+    print(school_abbreviation(sch))
+    if school_abbreviation(sch) == "rit":
+        if spt[1] == 1:
+            return spt[0], sch
+        else:
+            return sex + spt[0], sch
     if spt[1] == 1:
         return school_abbreviation(sch) + spt[0], sch
     else:
@@ -92,13 +97,14 @@ def player_input_line(call, school, f:str):
     # Original version of this code
     # f = f.split("\t")
     # return f"{call}{f[2]}\t{school}'s {position(f)} {f[0]} {f[1]}, #{f[2]},\t{f[0]} {f[1]}, #{f[2]},\t{f[1]}\n"
-
-    first, last, number, pos = (f + ['']) if len(f:=f.split("\t")) == 3 else (f[:2] + position(f[3]))
+    # print(g:=f.split())
+    # print(len(g))
+    first, last, number, pos = (f + ['']) if len(f:=f.split("\t")) == 3 else (f[:3] + [position(f[3])])
     # padding with empty string if length is less than 4
     # if this doesn't work, go yell at Jonah (@TG-Techie)
     first = first.capitalize()
     last = last.capitalize()
-    return f"""{call}{number}\t{school}'s {pos}{first} {last} (#{number}),\t{first} {last} (#{number}),\t{last}\n"""
+    return f"""{call}{number}\t{school}'s {pos}{first} {last} ({number}),\t{first} {last} ({number}),\t{last}\n"""
 
 
 def coach_input_line(call, school, f):
@@ -110,7 +116,8 @@ def coach_input_line(call, school, f):
     :return: (String) A properly formatted line with all necessary information about a coach.
     """
     f=f.split("\t")
-    first, last, pos = (f[0].capitalize() + f[1].capitalize() + coachformat(f[2]))
+    print(f"{f[0]}, {f[1]}, {coachformat(f[2])}, {len((f[0], f[1], coachformat(f[2])))}")
+    first, last, pos = (f[0].capitalize(), f[1].capitalize(), coachformat(f[2]))
     newCall = f[2].split(" ")
     for item in newCall:
         call += item[0].lower()
@@ -142,14 +149,17 @@ def main():
                 return # do not call exit here
             except IOError:
                 print("File already exists. Copy this output to a new file if you wish to save it.")
-                for line in roster:
-                    print(line)
+                if len(roster) == 1:
+                    print(roster[0])
+                else:
+                    for line in roster:
+                        print(line)
                 return # do not call exit here
         elif inpt == "coach":
             print("Line input is FirstName tab LastName tab Head Coach/Assistant Coach/Associate Coach/etc.")
             inpt = input(">")
             try:
-                assert (ln:=len(inpt.split("\t"))) in (3), f'Expected a list of len 3, got len {ln}'
+                assert (ln:=len(inpt.split("\t"))) == 3, f'Expected a list of len 3, got len {ln}'
                 roster += coach_input_line(call, school, inpt)
             except IndexError:
                 continue
