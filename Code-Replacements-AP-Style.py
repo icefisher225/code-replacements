@@ -133,11 +133,11 @@ def main():
     '''
     call, school = basic_info()
     roster = list()
-    print("the word tab needs to be replaced by a press of the tab key when it is typed in. ")
-    print("Line input is FirstName tab Lastname tab Number " + \
-          "(tab Position, if they have a position like goalie or captain).")
+    print("Entries are tab-spaced. Use the tab key between entries on a line. ")
+    print("Line input is <FirstName> <Lastname> <Number> " + \
+          "optional <Position> (use <Position> for goaltender, captain, etc).")
     print("To add coaches, type 'coach'. To finish and save the file, type 'exit'.")
-    print("The file will be saved to the folder you ran this application from.")
+    print(f"The file will be saved to .  /Out/{filename(call=call)}.")
     while True:
         inpt = input(">")
         if inpt == "exit":
@@ -156,7 +156,8 @@ def main():
                         print(line)
                 return # do not call exit here
         elif inpt == "coach":
-            print("Line input is FirstName tab LastName tab Head Coach/Assistant Coach/Associate Coach/etc.")
+            print("Entries are tab spaced. Use the tab key between entries on a line.")
+            print("Line input is <FirstName> <LastName> <Coach Position> (<Coach Position> is head coach, assistant coach, etc.).")
             inpt = input(">")
             try:
                 assert (ln:=len(inpt.split("\t"))) == 3, f'Expected a list of len 3, got len {ln}'
