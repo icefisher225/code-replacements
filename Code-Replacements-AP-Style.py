@@ -76,12 +76,16 @@ def basic_info():
     #     item[0] = item[0].upper()
     # school = " ".join(school)
     no_lst = ["Of", "The", "In", "At", "For"]
-    for name in school:
+    for i in range(len(school)):
+        name = school[i]
         name = name.capitalize()
+        dprint(name)
         for item in no_lst:
             if name == item:
-                name = name.lower()
+                dprint("test == true")
+                school[i] = name.lower()
     sch = " ".join(school)
+    dprint(sch)
     while True:
         sex = input("sex (m/w): ").lower()
         if sex == "m" or sex == "w":
