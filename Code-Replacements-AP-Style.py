@@ -1,4 +1,41 @@
 from datetime import datetime
+from sys import platform, version_info, hexversion, version
+import os
+
+PRINT = True
+ACS = 0 #assistant coaches
+HCS = 0 #head coaches
+CS = 0  #coaches
+AT = 0  #athletic trainers
+AS = 0  #assistants
+
+def dprint(arg):
+    global PRINT
+    if PRINT == True:
+        print(arg)
+    else:
+        pass
+
+def platform_check():
+    if hexversion >= 3070000:
+        if platform.lower() == "linux":
+            #file path isntructions for linux
+            dprint("Linux")
+            pass
+        elif platform.lower() == "darwin":
+            dprint("MacOS")
+            pass
+        elif platform.lower() == "win32":
+            #file platform instructions for windows
+            dprint("Windows")
+            pass
+        else:
+            print(f"Platform not supported. Please try again on Windows, MacOS, or Linux.")
+            raise OSError("Unsupported platform")
+    else:
+        print(f"Python version too old. Python >3.7 required, found Python {version}.")
+        raise OSError("Unsupported platform")
+
 
 
 def school_abbreviation(name):
@@ -38,7 +75,7 @@ def basic_info():
     # for item in school:
     #     item[0] = item[0].upper()
     # school = " ".join(school)
-    no_lst = ["of", "the", "in", "at", "for"]
+    no_lst = ["Of", "The", "In", "At", "For"]
     for name in school:
         name = name.capitalize()
         for item in no_lst:
@@ -131,13 +168,16 @@ def main():
     Runs the program to create properly formatted player and coach files.
     :return: None.
     '''
+
+    platform_check()
+
     call, school = basic_info()
     roster = list()
     print("Entries are tab-spaced. Use the tab key between entries on a line. ")
     print("Line input is <FirstName> <Lastname> <Number> " + \
           "optional <Position> (use <Position> for goaltender, captain, etc).")
     print("To add coaches, type 'coach'. To finish and save the file, type 'exit'.")
-    print(f"The file will be saved to .  /Out/{filename(call=call)}.")
+    print(f"The file will be saved to .{filename(call=call)}.")
     while True:
         inpt = input(">")
         if inpt == "exit":
@@ -157,12 +197,15 @@ def main():
                 return # do not call exit here
         elif inpt == "coach":
             print("Entries are tab spaced. Use the tab key between entries on a line.")
-            print("Line input is <FirstName> <LastName> <Coach Position> (<Coach Position> is head coach, assistant coach, etc.).")
+            print("Input format is <FirstName> <LastName> <Coach Position> (<Coach Position> is head coach, assistant coach, etc.).")
             inpt = input(">")
             try:
                 assert (ln:=len(inpt.split("\t"))) == 3, f'Expected a list of len 3, got len {ln}'
                 roster += coach_input_line(call, school, inpt)
             except IndexError:
+                continue
+            except AssertionError as e:
+                print(e)
                 continue
         else:
             if inpt == '\n':
