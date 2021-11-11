@@ -96,7 +96,7 @@ def basic_info():
         spt = sport()
         if spt is not None:
             break
-    print(school_abbreviation(sch))
+    dprint(school_abbreviation(sch))
     if school_abbreviation(sch) == "rit":
         if spt[1] == 1:
             return spt[0], sch
